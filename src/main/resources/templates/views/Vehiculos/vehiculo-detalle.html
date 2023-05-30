@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+  <head th:replace="fragments/common-head :: common-head">
+  </head>
+  <body>
+    <h1>Detalles de Vehiculos <span th:text="${nombre}"></span>!</h1>
+    <!-- Fragmento de la barra de navegación -->
+    <div th:replace="fragments/navbar :: navbar"></div>
+        <div class="container">
+<!--            <button
+                type="button"
+                class="btn btn-warning"
+                data-toggle="modal"
+                data-target="#editarVehiculoModal"
+            >Editar detalles</button>
+ <td><a th:href="@{/vehiculos/editar/{id}(id=${vehiculo.id})}" class="btn btn-warning">Editar en pagina</a></td>
+-->
+ <form th:action="@{/vehiculos/editar/{id}(id=${vehiculo.id})}" th:object="${vehiculo}" method="post">
+    <input type="hidden" th:field="*{id}">
+    <div class="mb-3">
+        <label for="marca" class="form-label">Marca</label>
+        <input type="text" class="form-control" id="marca" th:field="*{marca}">
+    </div>
+    <div class="mb-3">
+        <label for="modelo" class="form-label">Modelo</label>
+        <input type="text" class="form-control" id="modelo" th:field="*{modelo}">
+    </div>
+    <div class="mb-3">
+        <label for="matricula" class="form-label">Matricula</label>
+        <input type="text" class="form-control" id="matricula" th:field="*{matricula}">
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+    <a href="/vehiculos/listado-vehiculos" class="btn btn-secondary">Cancelar</a>
+    <button type="button" class="btn btn-danger" onclick="mostrarModalEliminar()">Eliminar</button>
+    </div>
+    </form>
+    
+        <!--Ventana modal de edicion-->
+        <div
+            class="modal fade"
+            id="editarVehiculoModal"
+            tabindex="-1"
+            aria-labelledby="editarVehiculoModalLabel"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editarVehiculoModalLabel">Editar vehiculo</h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editarVehiculoForm">
+                            <input type="hidden" id="vehiculoId" th:value="${vehiculo.id}">
+                            <div class="mb-3">
+                                <label for="marca" class="form-label">Marca</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="marca"
+                                    th:value="${vehiculo.marca}"
+                                >
+                            </div>
+                            <div class="mb-3">
+                                <label for="modelo" class="form-label">Modelo</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="modelo"
+                                    th:value="${vehiculo.modelo}"
+                                >
+                            </div>
+                            <div class="mb-3">
+                                <label for="modelo" class="form-label">Matricula</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="modelo"
+                                    th:value="${vehiculo.matricula}"
+                                >
+                            </div>
+
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" onclick="actualizarVehiculo()">Guardar cambios</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Ventana modal de confirmación de eliminación -->
+        <div
+            class="modal fade"
+            id="eliminarVehiculoModal"
+            tabindex="-1"
+            aria-labelledby="eliminarVehiculoModalLabel"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="eliminarVehiculoModalLabel">Confirmar eliminación</h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Estás seguro de que deseas eliminar la vehiculo con ID:
+                        <span id="modalEliminarVehiculoId"></span>
+                        ?
+                    </div>                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-danger" onclick="eliminarVehiculo()">Eliminar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Ventana modal de confirmación de eliminación exitosa -->
+        <div
+            class="modal fade"
+            id="eliminacionExitosaModal"
+            tabindex="-1"
+            aria-labelledby="eliminacionExitosaModalLabel"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="eliminacionExitosaModalLabel">Eliminación exitosa</h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
+                    </div>
+                    <div class="modal-body">
+                        La vehiculo se ha eliminado correctamente.
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal"
+                            onclick="redirigirAlListado()"
+                        >Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Ventana modal de confirmación -->
+        <div
+            class="modal fade"
+            id="confirmModal"
+            tabindex="-1"
+            aria-labelledby="confirmModalLabel"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmModalLabel">Operación exitosa</h5>
+                        <button
+                            type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close"
+                        >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- mensaje de que la vehiculo se ha actualizado con el id de la vehiculo-->
+                        <p>La vehiculo con ID:
+                            <span id="modalVehiculoId"></span> se ha actualizado con éxito.
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Ventana modal de error -->
+        <div
+            class="modal fade"
+            id="errorModal"
+            tabindex="-1"
+            aria-labelledby="errorModalLabel"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
+                    </div>
+                    <div class="modal-body">
+                        Ocurrió un error al actualizar la vehiculo. Por favor, inténtalo de nuevo.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+    
+function actualizarVehiculo() {
+
+  const vehiculoId = document.getElementById('vehiculoId').value;
+  const marca = document.getElementById('marca').value;
+  const modelo = document.getElementById('modelo').value;
+  const matricula = document.getElementById('matricula').value;
+
+  const data = {
+    id: vehiculoId,
+    marca: marca,
+    modelo: modelo,
+    matricula: matricula,    
+  };
+
+  fetch(`/vehiculos/${vehiculoId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+    .then((response) => {
+      if (response.ok) {
+        // Mostrar ventana modal de confirmación
+        document.getElementById('modalVehiculoId').innerText = vehiculoId; // Agregar esta línea
+        $('#editarVehiculoModal').modal('hide');
+        $('#confirmModal').modal('show');
+        // Recargar la página después de un tiempo
+        setTimeout(() => {
+          location.reload();
+        }, 2000); // El tiempo de espera en milisegundos antes de recargar la página
+      } else {
+        // Mostrar ventana modal de error
+        $('#editarVehiculoModal').modal('hide');
+        $('#errorModal').modal('show');
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      // Mostrar ventana modal de error
+      $('#editarVehiculoModal').modal('hide');
+      $('#errorModal').modal('show');
+    });
+}
+//Eliminar vehiculo
+function eliminarVehiculo() {
+    const vehiculoId = document.getElementById('vehiculoId').value;
+
+    fetch(`/vehiculos/${vehiculoId}`, {
+        method: 'DELETE',
+    })
+        .then((response) => {
+            if (response.ok) {
+                // Mostrar ventana modal de eliminación exitosa
+                $('#eliminarVehiculoModal').modal('hide');
+                $('#eliminacionExitosaModal').modal('show');
+            } else {
+                // Mostrar ventana modal de error
+                $('#eliminarVehiculoModal').modal('hide');
+                $('#errorModal').modal('show');
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            // Mostrar ventana modal de error
+            $('#eliminarVehiculoModal').modal('hide');
+            $('#errorModal').modal('show');
+        });
+}
+
+//mostrar modal Eliminar
+function mostrarModalEliminar() {
+  const vehiculoId = document.getElementById('vehiculoId').value;
+  document.getElementById('modalEliminarVehiculoId').innerText = vehiculoId;
+  $('#eliminarVehiculoModal').modal('show');
+}
+
+
+//obtener el id de una Vehiculo para eliminarla
+document.getElementById('modalEliminarVehiculoId').textContent = vehiculoId;
+
+//redirigir al listado principal despues de eliminar una bici
+function redirigirAlListado() {
+    window.location.href = "/vehiculos/listado-vehiculos";
+}
+    </script>
+</html>

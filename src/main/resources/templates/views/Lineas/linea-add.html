@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/common-head :: common-head">
+    <title>Añadir Linea</title>
+</head>
+<body>
+    <h1>Editar Linea</h1>
+    <!-- Fragmento de la barra de navegación -->
+    <div th:replace="fragments/navbar :: navbar"></div>
+
+    <div class="container">
+  
+            <!-- Campo para el ID de la reparacion -->
+
+        <form th:action="@{/lineas/lineas}" th:object="${linea}" method="post">
+<!--        <form action="/linas/update-post" method="post" th:object="${linea}">         -->
+            <input type="hidden" th:field="*{id}" />
+            <input type="hidden" name="idReparacion" th:value="${idReparacion}" />
+
+            <div class="form-group">
+                <h3>
+                <label for="importe">Añadir Linea a la Reparación con id:</label>
+                 <span th:text="${idReparacion}"></span> </h1>
+                </h3>
+            </div>
+            <div class="row">
+                <!-- Descripcion -->
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <label for="importe">Descripcion:</label>
+                    <input class="form-control" type="text" th:field="*{descripcion}" id="descripcion" >
+
+                </div>
+        
+                <!-- Importe -->
+                <div class="col-md-6 col-lg-3 mb-3">
+                    <label for="importe">Importe:</label>
+                    <input class="form-control" type="number" th:field="*{importe}" id="importe" step="0.01" />
+                </div>
+        
+                <!-- Botón para enviar el formulario -->
+                <div class="col-md-6 col-12 mb-3">
+                    <button type="submit" class="btn btn-primary">Guardar Linea</button>
+                </div>
+            </div>
+        </form>
+        
+     </div>
+</body>
+</html>

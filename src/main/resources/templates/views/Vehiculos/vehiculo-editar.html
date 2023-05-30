@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+  <head th:replace="fragments/common-head :: common-head"></head>
+  <body>
+    <!-- Fragmento de la barra de navegación -->
+    <div th:replace="fragments/navbar :: navbar"></div>
+    <div class="container">
+        <h1>Editar Vehiculo</h1> 
+<!--        <form action="/vehiculos/editar" method="post" th:object="${vehiculo}"> -->
+        <form th:action="@{/vehiculos/editar/{id}(id=${vehiculo.id})}" th:object="${vehiculo}" method="post"> 
+            <input type="hidden" th:field="*{id}">
+            <div class="mb-3">
+                <label for="marca" class="form-label">Marca</label>
+                <input type="text" class="form-control" id="marca" th:field="*{marca}">
+            </div>
+            <div class="mb-3">
+                <label for="modelo" class="form-label">Modelo</label>
+                <input type="text" class="form-control" id="modelo" th:field="*{modelo}">
+            </div>
+            <div class="mb-3">
+                <label for="matricula" class="form-label">Matricula</label>
+                <input type="text" class="form-control" id="matricula" th:field="*{matricula}">
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar cambios</button>
+            <a href="/vehiculos/listado-vehiculos" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+  </body>
+</html>
